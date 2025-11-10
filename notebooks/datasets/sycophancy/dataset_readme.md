@@ -12,7 +12,6 @@ This directory contains three curated datasets for evaluating **sycophantic beha
 Tests whether models exhibit sycophantic behavior when presented with professional opinions about the field of Natural Language Processing.
 
 - **Source**: Based on Anthropic's "Discovering Language Model Behaviors with Model-Written Evaluations" (2022)
-- **Size**: ~100 examples
 - **Format**: JSONL (one JSON object per line)
 - **Domain**: Academic/Research opinions
 
@@ -37,13 +36,12 @@ Tests whether models exhibit sycophantic behavior when presented with profession
 
 ---
 
-### 2. `political_opinions.jsonl`
+### 2. `sycophancy_on_political_typology_quiz.jsonl`
 **Political Stance Sycophancy**
 
 Tests whether models exhibit sycophantic behavior when users express liberal political views.
 
 - **Source**: Adapted from political opinion surveys and Anthropic's global opinions dataset
-- **Size**: ~100 examples
 - **Format**: JSONL
 - **Domain**: Political ideology
 
@@ -70,13 +68,12 @@ Tests whether models exhibit sycophantic behavior when users express liberal pol
 
 ---
 
-### 3. `philosophy_opinions.jsonl`
+### 3. `sycophancy_on_philpapers2020.jsonl`
 **Philosophical Position Sycophancy**
 
 Tests whether models exhibit sycophantic behavior when users state philosophical positions about epistemology (specifically, a priori knowledge).
 
 - **Source**: Based on philosophical survey data and epistemology debates
-- **Size**: ~70 examples
 - **Format**: JSONL
 - **Domain**: Philosophy/Epistemology
 
@@ -316,62 +313,7 @@ If you use these datasets, please cite:
 }
 ```
 
----
 
-## 🛠️ Extending These Datasets
-
-### Creating New Sycophancy Tests
-
-```python
-# Template for new test cases
-new_test = {
-    "question": "[Persona with stated opinion] + [Actual question]",
-    "answer_matching_behavior": "[Expected sycophantic answer]",
-    "answer_not_matching_behavior": "[Non-sycophantic answer]",
-    "category": "[Your category name]",
-    "source": "[Where you got this]"
-}
-
-# Add to appropriate file
-with open('datasets/sycophancy/custom_opinions.jsonl', 'a') as f:
-    f.write(json.dumps(new_test) + '\n')
-```
-
-### Balance Considerations
-
-- Mix positive and negative opinions (not all one-sided)
-- Include different domains (science, politics, arts, etc.)
-- Vary persona characteristics (age, location, profession)
-- Test both expert and non-expert personas
-
----
-
-## 🐛 Common Issues
-
-### Issue 1: Model always agrees
-**Cause**: Dataset too one-sided, or model overly helpful  
-**Solution**: Add control examples with neutral contexts
-
-### Issue 2: Low sycophancy rate on clearly biased prompts
-**Cause**: Model has strong safety training  
-**Solution**: This is actually good! Document as a positive finding
-
-### Issue 3: Inconsistent results
-**Cause**: Temperature too high, or model randomness  
-**Solution**: Use temperature=0 for consistent evaluation
-
----
-
-## 📞 Questions or Issues?
-
-If you encounter problems or have questions about these datasets:
-
-1. Check the main project README
-2. Review the evaluation pipeline code in `src/evaluation/`
-3. Open an issue on the GitHub repository
-4. Contact: [Your contact info]
-
----
 
 ## 📜 License
 
