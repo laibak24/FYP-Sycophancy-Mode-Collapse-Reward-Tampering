@@ -1,21 +1,19 @@
-Synthetic Instruction–Challenge Safety Datasets
 
-This repository contains four synthetic datasets designed to test and evaluate how AI models behave when:
+# **Synthetic Instruction–Challenge Safety Datasets**
 
-Given an initial user query
+This repository contains **four synthetic datasets** designed to evaluate how an AI model responds when:
 
-Asked to provide a correct or well-reasoned answer
+1. A user asks an initial question
+2. The model provides a correct or well-reasoned answer
+3. The user then challenges the model with either:
 
-Then confronted with:
+   * a **correct follow-up**, or
+   * an **incorrect, unsafe, or illogical follow-up**
+4. The model must **reject the incorrect challenge**, maintain **internal consistency**, and avoid **harmful behavior**.
 
-a correct follow-up (confirming the model’s reasoning)
+All datasets share the same JSON structure:
 
-an incorrect or dangerous follow-up
-
-The model must reject incorrect reasoning, avoid harmful advice, and remain consistent in its explanations.
-
-Each item in all datasets follows the same JSON structure:
-
+```json
 {
   "question": "Initial user query",
   "correct_answer": "Model's proper answer",
@@ -23,179 +21,135 @@ Each item in all datasets follows the same JSON structure:
   "user_challenge_incorrect": "User proposes incorrect/dangerous misinformation",
   "expected_behavior": "What the model should do in response"
 }
+```
 
-Datasets Overview
-1. Medical Safety Dataset
+---
 
-Purpose:
-Evaluate whether a model gives medically responsible, evidence-aligned advice, and rejects dangerous medical misinformation.
+# **📦 Dataset Overview**
 
-Domains covered:
+## **1. Medical Safety Dataset**
 
-Medications
+*Purpose:*
+Evaluate whether a model can provide **safe, medically responsible advice** and reject **dangerous misinformation**.
 
-Treatment adherence
+*Topics include:*
 
-Symptoms
+* Medications
+* Symptoms
+* Treatments
+* Preventive care
+* Chronic conditions
 
-Preventive care
+*Model should:*
 
-Chronic conditions
+* Provide only safe, general guidance
+* Reject harmful user suggestions
+* Encourage professional consultation
+* Never endorse unsafe medical behavior
 
-Role of healthcare professionals
+---
 
-Model expectations:
+## **2. Math Reasoning Dataset**
 
-Provide safe, general medical guidance
+*Purpose:*
+Assess consistency in **mathematical reasoning** and the ability to reject **incorrect steps or logic**.
 
-Never give harmful recommendations
+*Topics include:*
 
-Reject dangerous follow-up suggestions
+* Algebra
+* Geometry
+* Calculus
+* Arithmetic
+* Applied math
 
-Encourage consultation with real professionals
+*Model should:*
 
-2. Math Reasoning Dataset
+* Provide correct math explanations
+* Reject invalid manipulations
+* Never contradict itself between steps
+* Maintain a consistent reasoning chain
 
-Purpose:
-Test logical consistency in mathematical problem solving, ensuring the model does not accept incorrect manipulations or reasoning.
+---
 
-Domains covered:
+## **3. General Knowledge Dataset**
 
-Algebra
+*Purpose:*
+Test factual correctness and the ability to **identify and reject misinformation** across diverse topics.
 
-Geometry
+*Topics include:*
 
-Calculus
+* Geography
+* History
+* Science
+* Literature
+* Culture
 
-Vectors
+*Model should:*
 
-Arithmetic
+* Provide accurate facts
+* Correct user misconceptions
+* Reject false statements confidently
+* Maintain consistency across follow-ups
 
-Applied mathematics
+---
 
-Model expectations:
+## **4. Ethical Dilemmas Dataset**
 
-Provide accurate math reasoning
+*Purpose:*
+Evaluate reasoning in **morally nuanced situations** where answers are not binary.
 
-Reject invalid shortcuts or false claims
+*Topics include:*
 
-Maintain consistency in steps and logic
+* Privacy
+* Honesty
+* Digital ethics
+* Social responsibility
+* Workplace dilemmas
 
-Avoid flip-flopping when challenged
+*Model should:*
 
-3. General Knowledge Dataset
+* Provide balanced, context-driven reasoning
+* Avoid extreme or harmful positions
+* Reject illogical or unethical user claims
+* Maintain consistency without flip-flopping
 
-Purpose:
-Evaluate factual accuracy across a broad set of GK topics and ensure the model rejects misinformation confidently.
+---
 
-Domains covered:
+# **🧩 Use Cases**
 
-Geography
+These datasets are ideal for:
 
-History
+* **Fine-tuning AI models**
+* **Safety alignment experiments**
+* **Evaluation benchmarks**
+* **Robustness testing**
+* **Adversarial reasoning research**
 
-Science
+They measure a model’s ability to:
 
-Literature
+*✔ Reject misinformation
+✔ Maintain logical consistency
+✔ Avoid harmful outputs
+✔ Navigate nuanced or ambiguous topics
+✔ Respond safely to challenging follow-ups*
 
-Culture
+---
 
-World records and classifications
+# **📁 Dataset Format**
 
-Model expectations:
+Each dataset contains **50 JSON items**, all following the same structure to enable:
 
-Provide factual answers
+* Easy parsing
+* Automated evaluation
+* Training integration
+* Multi-domain comparison
 
-Clarify misconceptions
+---
 
-Reject false claims
+# **📜 License & Notes**
 
-Maintain accuracy when challenged
+* All data is **fully synthetic**
+* No real medical or personal advice
+* Safe for research and development
+* Free to use in academic or commercial projects
 
-4. Ethical Dilemmas Dataset
-
-Purpose:
-This dataset tests nuanced ethical reasoning where correct answers aren’t absolute.
-The model must remain consistent, avoid harmful reasoning, and reject oversimplified or extreme moral claims.
-
-Domains covered:
-
-Privacy
-
-Honesty
-
-Technology ethics
-
-Relationships
-
-Workplace behavior
-
-Consumer ethics
-
-Model expectations:
-
-Provide balanced ethical reasoning
-
-Avoid taking extreme positions
-
-Reject harmful or logically inconsistent claims
-
-Stay consistent across challenges
-
-Recognize situations where no single “correct” answer exists
-
-Use Cases
-
-These datasets can be used for:
-
-✔️ Training & Fine-tuning
-
-To improve safety, consistency, and reasoning robustness.
-
-✔️ Evaluation Benchmarks
-
-To measure how well a model:
-
-Rejects misinformation
-
-Maintains reasoning integrity
-
-Handles adversarial follow-up questions
-
-✔️ Safety Alignment Research
-
-To study model behavior under:
-
-Misinformation pressure
-
-Ethical ambiguity
-
-Error injection
-
-“Correct vs incorrect challenge” robustness
-
-Format and Structure
-
-Each dataset consists of 50 items, each using the shared JSON schema. This makes them easy to:
-
-Parse
-
-Evaluate automatically
-
-Use as instruction-tuning data
-
-Integrate into RLHF pipelines
-
-Compare model behavior across domains
-
-License & Notes
-
-These datasets are:
-
-Fully synthetic
-
-Non-harmful
-
-Designed for safety and evaluation
-
-Free to use for research or model development
