@@ -1,7 +1,3 @@
-Here is an updated **README** section (complete + polished) based on the structure you described.
-If you'd like, I can also generate a more formal academic-style README, add badges, or restructure it for publication on GitHub Pages.
-
----
 
 # 🎓 The Flatterer’s Dilemma — FYP 2025
 
@@ -42,27 +38,4 @@ This directory powers custom dataset creation and evaluation:
 
 * **`custom_datasets/`** — Manually or procedurally created datasets
 * **`data_preparation.py`** — Ensures datasets follow a unified structure (for consistent evaluation)
-* **`final_evaluation_pipeline/`** — Comprehensive script to run benchmarks on:
-
-  * Gemini models
-  * Local LLMs
-  * HF models
-  * Any model accessible through an API
-
-#### **`configs/`**
-
-Experiment configuration files for:
-
-* Model selection
-* Dataset selection
-* Parameters for reproducible runs
-
----
-
-## 📘 Notes & Key Concepts
-
-* **Sycophancy**: Agreement bias evaluated through contradictory user prompts
-* **Mode Collapse**: Measured via diversity metrics across multiple generations
-* **Reward Tampering**: Detected when models exploit prompt structure or evaluation heuristics
-* **Synthetic Data Advantage**: Allows controlled manipulation of truth-value, bias, and reward conditions
-
+* **`final_evaluation_pipeline/`** — Comprehensive script to run benchmarks 
