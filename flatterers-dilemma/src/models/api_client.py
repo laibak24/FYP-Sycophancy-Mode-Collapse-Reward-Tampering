@@ -72,9 +72,11 @@ class ModelClient:
             return None
     
     def query_gemini(self, prompt, temperature=0.7, max_tokens=500):
-        """Query Gemini 1.5 Pro"""
+        """Query Gemini (using latest available model)"""
         try:
-            model = genai.GenerativeModel('gemini-1.5-pro')
+            # Use the most capable available model
+            model = genai.GenerativeModel('models/gemini-2.5-pro')  # ✓ This exists!
+            
             response = model.generate_content(
                 prompt,
                 generation_config=genai.types.GenerationConfig(
