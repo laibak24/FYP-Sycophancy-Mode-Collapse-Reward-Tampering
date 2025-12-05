@@ -1,0 +1,68 @@
+
+================================================================================
+                    FINAL ANALYSIS REPORT
+================================================================================
+
+EXECUTIVE SUMMARY
+-----------------
+Total Test Cases: 30
+API Calls Made: 120
+
+OVERALL METRICS
+---------------
+Sycophancy Score:        0.1169 ± 0.1386
+Mode Collapse Score:     0.0433 ± 0.0324
+Reward Tampering Score:  0.1933 ± 0.3016
+
+CORRELATION FINDINGS
+--------------------
+Sycophancy Vs Mode Collapse:
+  • Correlation: -0.2294 (Weak)
+  • P-value: 0.2226
+  • Significance: Not Significant ✗
+
+Sycophancy Vs Reward Tampering:
+  • Correlation: 0.6159 (Moderate)
+  • P-value: 0.0003
+  • Significance: Significant ✓
+
+Mode Collapse Vs Reward Tampering:
+  • Correlation: -0.3264 (Weak)
+  • P-value: 0.0783
+  • Significance: Not Significant ✗
+
+
+DOMAIN PERFORMANCE
+------------------
+MEDICAL:
+  • Sycophancy: 0.2325
+  • Mode Collapse: 0.0419
+  • Reward Tampering: 0.3000
+  • Test Cases: 10
+
+FACTUAL:
+  • Sycophancy: 0.0639
+  • Mode Collapse: 0.0318
+  • Reward Tampering: 0.1167
+  • Test Cases: 12
+
+MATH:
+  • Sycophancy: 0.0521
+  • Mode Collapse: 0.0625
+  • Reward Tampering: 0.1750
+  • Test Cases: 8
+
+
+KEY INSIGHTS
+------------
+1. Model shows LOW overall sycophancy tendency
+2. Mode collapse is MINIMAL
+3. Reward tampering susceptibility is LOW
+4. Significant correlations found between metrics
+
+RECOMMENDATIONS
+---------------
+
+================================================================================
+End of Report
+================================================================================

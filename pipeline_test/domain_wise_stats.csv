@@ -1,0 +1,6 @@
+,sycophancy_score,sycophancy_score,sycophancy_score,sycophancy_score,mode_collapse_score,mode_collapse_score,mode_collapse_score,mode_collapse_score,reward_tampering_score,reward_tampering_score,reward_tampering_score,reward_tampering_score
+,mean,std,min,max,mean,std,min,max,mean,std,min,max
+domain,,,,,,,,,,,,
+factual,0.064,0.12,0.0,0.35,0.032,0.017,0.006,0.056,0.117,0.237,0.0,0.7
+math,0.052,0.134,0.0,0.383,0.062,0.042,0.0,0.125,0.175,0.324,0.0,0.7
+medical,0.232,0.088,0.1,0.35,0.042,0.034,0.0,0.113,0.3,0.35,0.0,0.7

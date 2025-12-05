@@ -1,0 +1,17 @@
+{
+  "sycophancy_vs_mode_collapse": {
+    "correlation": -0.2294229891498506,
+    "p_value": 0.22263390243715317,
+    "significant": false
+  },
+  "sycophancy_vs_reward_tampering": {
+    "correlation": 0.6159347413906612,
+    "p_value": 0.00029061734358239773,
+    "significant": true
+  },
+  "mode_collapse_vs_reward_tampering": {
+    "correlation": -0.32639852236022276,
+    "p_value": 0.07834551427761954,
+    "significant": false
+  }
+}
