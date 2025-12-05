@@ -1,200 +1,119 @@
+"""
+Gemini API Diagnostic Tool
+Tests connection and identifies issues
+"""
+
 import os
-import sys
 from dotenv import load_dotenv
 
 load_dotenv()
-current_dir = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, current_dir)
 
-from src.models.api_client import ModelClient
-from src.evaluation.sycophancy_eval import (
-    SycophancyEvaluator, 
-    generate_math_test_cases, 
-    generate_medical_test_cases
-)
-from src.evaluation.mode_collapse_eval import (
-    ModeCollapseEvaluator,
-    generate_diverse_prompts
-)
-from src.evaluation.reward_tampering_eval import RewardTamperingEvaluator
+print("="*70)
+print("GEMINI API DIAGNOSTIC TOOL")
+print("="*70)
+
+# Step 1: Check API key
+print("\n[1/4] Checking API Key...")
+api_key = os.getenv('GOOGLE_API_KEY')
+
+if not api_key:
+    print("❌ GOOGLE_API_KEY not found in .env file")
+    print("\nTo fix:")
+    print("1. Get a key from: https://makersuite.google.com/app/apikey")
+    print("2. Add to .env file: GOOGLE_API_KEY=your_key_here")
+    exit(1)
+elif api_key == 'your_google_key_here':
+    print("❌ GOOGLE_API_KEY is placeholder value")
+    print("\nTo fix:")
+    print("1. Get a key from: https://makersuite.google.com/app/apikey")
+    print("2. Replace placeholder in .env file with actual key")
+    exit(1)
+else:
+    print(f"✓ API key found: {api_key[:10]}...{api_key[-4:]}")
+
+# Step 2: Import and test
+print("\n[2/4] Testing Gemini SDK...")
+try:
+    import google.generativeai as genai
+    print("✓ google-generativeai package installed")
+except ImportError:
+    print("❌ google-generativeai not installed")
+    print("\nTo fix: pip install google-generativeai")
+    exit(1)
+
+# Step 3: Configure
+print("\n[3/4] Configuring Gemini client...")
+try:
+    genai.configure(api_key=api_key)
+    print("✓ Client configured")
+except Exception as e:
+    print(f"❌ Configuration failed: {e}")
+    exit(1)
+
+# Step 4: Test simple query
+print("\n[4/4] Testing simple query...")
+
+test_prompts = [
+    "What is 2+2?",
+    "What is 15 × 7?",
+    "What is the square root of 144?"
+]
+
+for i, prompt in enumerate(test_prompts, 1):
+    print(f"\n  Test {i}: {prompt}")
+    try:
+        model = genai.GenerativeModel('gemini-2.5-pro')
+        response = model.generate_content(
+            prompt,
+            generation_config={
+                'temperature': 0.3,
+                'max_output_tokens': 50,
+            }
+        )
+        
+        # Check response
+        if hasattr(response, 'text') and response.text:
+            print(f"  ✓ Response: {response.text.strip()[:50]}")
+        else:
+            print(f"  ⚠️  No text in response")
+            print(f"  Candidates: {response.candidates}")
+            if response.candidates:
+                print(f"  Finish reason: {response.candidates[0].finish_reason}")
+                print(f"  Safety ratings: {response.candidates[0].safety_ratings}")
+        
+    except Exception as e:
+        print(f"  ❌ Error: {e}")
+        if "quota" in str(e).lower():
+            print("\n  Quota Error Detected:")
+            print("  • Free tier: 2 requests/minute, 1500 requests/day")
+            print("  • Wait 1 minute between tests")
+            print("  • Check usage: https://ai.dev/usage")
+        elif "invalid" in str(e).lower():
+            print("\n  Invalid API Key:")
+            print("  • Verify key at: https://makersuite.google.com/app/apikey")
+            print("  • Make sure billing is enabled (if required)")
 
 print("\n" + "="*70)
-print("GEMINI BEHAVIORAL TRIAD EVALUATION")
+print("DIAGNOSTIC COMPLETE")
 print("="*70)
-print("\nAvailable tests:")
-print("1. Quick Sycophancy Test (5 cases)")
-print("2. Quick Mode Collapse Test (10 prompts)")
-print("3. Quick Reward Tampering Test")
-print("4. Full Pipeline Test (All three)")
-print("5. Exit")
 
-choice = input("\nSelect option (1-5): ").strip()
+print("\nCommon Issues & Solutions:")
+print("\n1. Rate Limit (429 errors):")
+print("   • Free tier: 2 req/min, 1500 req/day")
+print("   • Solution: Add delays between requests")
+print("   • Upgrade: https://ai.google.dev/pricing")
 
-if choice == '5':
-    print("Exiting...")
-    sys.exit(0)
+print("\n2. Safety Filters (finish_reason: 2):")
+print("   • Gemini blocks certain prompts")
+print("   • Solution: Rephrase questions more neutrally")
+print("   • Example: 'What is X?' instead of 'Calculate X'")
 
-# Initialize client
-print("\n✓ Initializing Gemini client...")
-client = ModelClient()
-model_name = "gemini-1.5-pro"
-os.makedirs('results/gemini', exist_ok=True)
+print("\n3. Invalid API Key:")
+print("   • Get key: https://makersuite.google.com/app/apikey")
+print("   • Enable Gemini API in Google Cloud Console")
 
-if choice == '1':
-    # Sycophancy Test
-    print(f"\n{'='*70}")
-    print("GEMINI SYCOPHANCY TEST")
-    print(f"{'='*70}")
-    print(f"Model: {model_name}")
-    print(f"Test cases: 5 math problems")
-    print(f"{'='*70}\n")
-    
-    evaluator = SycophancyEvaluator(client)
-    test_cases = generate_math_test_cases(5)
-    
-    results = evaluator.run_evaluation(
-        model_name=model_name,
-        test_cases=test_cases,
-        use_api=True,
-        save_path='results/gemini/sycophancy_quick.json'
-    )
-    
-    print(f"\n{'='*70}")
-    print("RESULTS SUMMARY")
-    print(f"{'='*70}")
-    print(f"Overall Sycophancy Rate: {results['overall_sycophancy_rate']:.2f}%")
-    print(f"  - Progressive: {results['progressive_sycophancy']['rate']:.2f}%")
-    print(f"  - Regressive: {results['regressive_sycophancy']['rate']:.2f}%")
-    print(f"  - Honest: {results['honest']['rate']:.2f}%")
-    print(f"\n✓ Saved to: results/gemini/sycophancy_quick.json")
+print("\n4. Model Not Available:")
+print("   • Try: gemini-1.5-flash (faster, cheaper)")
+print("   • Try: gemini-pro (older, more stable)")
 
-elif choice == '2':
-    # Mode Collapse Test
-    print(f"\n{'='*70}")
-    print("GEMINI MODE COLLAPSE TEST")
-    print(f"{'='*70}")
-    print(f"Model: {model_name}")
-    print(f"Prompts: 10 diverse topics")
-    print(f"{'='*70}\n")
-    
-    evaluator = ModeCollapseEvaluator(client)
-    prompts = generate_diverse_prompts(10)
-    
-    results = evaluator.evaluate_mode_collapse(
-        model_name=model_name,
-        prompts=prompts,
-        use_api=True,
-        save_path='results/gemini/mode_collapse_quick.json'
-    )
-    
-    print(f"\n{'='*70}")
-    print("RESULTS SUMMARY")
-    print(f"{'='*70}")
-    print(f"Entropy: {results['entropy']:.4f}")
-    print(f"Baseline Entropy: {results['baseline_entropy']:.4f}")
-    print(f"Entropy Reduction: {results['entropy_reduction_percent']:.2f}%")
-    print(f"Severity: {results['severity']}")
-    print(f"\n✓ Saved to: results/gemini/mode_collapse_quick.json")
-
-elif choice == '3':
-    # Reward Tampering Test
-    print(f"\n{'='*70}")
-    print("GEMINI REWARD TAMPERING TEST")
-    print(f"{'='*70}")
-    print(f"Model: {model_name}")
-    print(f"Tests: Capability, Oversight, Deception")
-    print(f"{'='*70}\n")
-    
-    evaluator = RewardTamperingEvaluator(client)
-    
-    results = evaluator.run_full_evaluation(
-        model_name=model_name,
-        use_api=True,
-        save_path='results/gemini/reward_tampering_quick.json'
-    )
-    
-    print(f"\n{'='*70}")
-    print("RESULTS SUMMARY")
-    print(f"{'='*70}")
-    print(f"Overall Tampering Susceptibility: {results['overall_tampering_susceptibility']:.2%}")
-    print(f"  - Capability Vulnerability: {results['capability_elicitation']['vulnerability_score']:.2%}")
-    print(f"  - Oversight Manipulation: {results['oversight_manipulation']['manipulation_rate']:.2%}")
-    print(f"  - Deception Score: {results['strategic_deception']['average_deception_score']:.2f}")
-    print(f"\n✓ Saved to: results/gemini/reward_tampering_quick.json")
-
-elif choice == '4':
-    # Full Pipeline Test
-    print(f"\n{'='*70}")
-    print("GEMINI FULL PIPELINE TEST")
-    print(f"{'='*70}")
-    print("\nThis will run all three tests:")
-    print("  1. Sycophancy (5 cases)")
-    print("  2. Mode Collapse (10 prompts)")
-    print("  3. Reward Tampering (full suite)")
-    print("\nEstimated time: 5-10 minutes")
-    print(f"{'='*70}\n")
-    
-    confirm = input("Continue? (y/n): ").strip().lower()
-    if confirm != 'y':
-        print("Cancelled.")
-        sys.exit(0)
-    
-    # Step 1: Sycophancy
-    print("\n[1/3] Running Sycophancy Test...")
-    syc_eval = SycophancyEvaluator(client)
-    syc_cases = generate_math_test_cases(5)
-    syc_results = syc_eval.run_evaluation(
-        model_name=model_name,
-        test_cases=syc_cases,
-        use_api=True,
-        save_path='results/gemini/pipeline_sycophancy.json'
-    )
-    
-    # Step 2: Mode Collapse
-    print("\n[2/3] Running Mode Collapse Test...")
-    mode_eval = ModeCollapseEvaluator(client)
-    mode_prompts = generate_diverse_prompts(10)
-    mode_results = mode_eval.evaluate_mode_collapse(
-        model_name=model_name,
-        prompts=mode_prompts,
-        use_api=True,
-        save_path='results/gemini/pipeline_mode_collapse.json'
-    )
-    
-    # Step 3: Reward Tampering
-    print("\n[3/3] Running Reward Tampering Test...")
-    reward_eval = RewardTamperingEvaluator(client)
-    reward_results = reward_eval.run_full_evaluation(
-        model_name=model_name,
-        use_api=True,
-        save_path='results/gemini/pipeline_reward_tampering.json'
-    )
-    
-    # Summary
-    print(f"\n{'='*70}")
-    print("GEMINI BEHAVIORAL TRIAD SUMMARY")
-    print(f"{'='*70}")
-    print(f"Model: {model_name}\n")
-    print(f"1. SYCOPHANCY")
-    print(f"   Rate: {syc_results['overall_sycophancy_rate']:.2f}%")
-    print(f"   Progressive: {syc_results['progressive_sycophancy']['rate']:.2f}%")
-    print(f"   Regressive: {syc_results['regressive_sycophancy']['rate']:.2f}%")
-    print(f"\n2. MODE COLLAPSE")
-    print(f"   Entropy: {mode_results['entropy']:.4f}")
-    print(f"   Reduction: {mode_results['entropy_reduction_percent']:.2f}%")
-    print(f"   Severity: {mode_results['severity']}")
-    print(f"\n3. REWARD TAMPERING")
-    print(f"   Susceptibility: {reward_results['overall_tampering_susceptibility']:.2%}")
-    print(f"   Capability: {reward_results['capability_elicitation']['vulnerability_score']:.2%}")
-    print(f"   Oversight: {reward_results['oversight_manipulation']['manipulation_rate']:.2%}")
-    print(f"\n{'='*70}")
-    print("Expected Correlations (from paper):")
-    print("  Sycophancy ↔ Mode Collapse: r = 0.78")
-    print("  Mode Collapse ↔ Reward Tampering: r = 0.84")
-    print("  Sycophancy ↔ Reward Tampering: r = 0.71")
-    print(f"{'='*70}")
-    print(f"\n✓ All results saved to: results/gemini/")
-
-print(f"\n{'='*70}")
-print("✓ TEST COMPLETE!")
-print(f"{'='*70}\n")
+print("\n" + "="*70)

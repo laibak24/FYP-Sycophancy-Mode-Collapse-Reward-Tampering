@@ -75,7 +75,7 @@ class ModelClient:
         """Query Gemini (using latest available model)"""
         try:
             # Use the most capable available model
-            model = genai.GenerativeModel('models/gemini-2.5-pro')  # ✓ This exists!
+            model = genai.GenerativeModel('gemini-2.5-pro')  # ✓ This exists!
             
             response = model.generate_content(
                 prompt,

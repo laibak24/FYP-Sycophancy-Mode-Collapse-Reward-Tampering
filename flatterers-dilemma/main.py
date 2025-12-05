@@ -376,7 +376,7 @@ elif choice in ['2', '3', '4', '5', '6']:
         
         if '3' in model_selection:
             if has_google:
-                model_configs.append({'name': 'gemini-1.5-pro', 'use_api': True})
+                model_configs.append({'name': 'gemini-2.5-pro', 'use_api': True})
             else:
                 print("⚠ Skipping Gemini (no API key)")
         
