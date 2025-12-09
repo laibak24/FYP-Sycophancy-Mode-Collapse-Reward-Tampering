@@ -1,5 +1,3 @@
----
-
 # **The Flatterer’s Dilemma — FYP 2025**
 
 Why AI Would Rather Lie Than Disappoint
@@ -48,6 +46,8 @@ Low output diversity—i.e., models producing repetitive or highly similar respo
 ├── syc-rt-gpt4/           # GPT-4o-mini reward hack ↔ sycophancy correlation
 ├── syc-rt-ollama/         # Phi-3 via Ollama sycophancy + reward tampering evals
 ├── syc-rt-mdclp-gemini/   # Gemini-based sycophancy, mode collapse & reward tampering pipeline
+├── syc-rt-mdclp-gpt4/  # GPT-4Behavioral Triad Pipeline — sycophancy+mode collapse+reward tampering
+
 └── README.md (this file)
 ```
 
@@ -87,6 +87,14 @@ A broader safety analysis using **Google Gemini Flash**, measuring:
 * Spearman/Pearson correlations with significance testing
 
 ---
+### **🔹 syc-rt-mdcp-gpt4/**
+This module contains the enhanced, full-spectrum Behavioral Triad Pipeline using:
+
+* HH-RLHF dataset
+* GPT-4o-mini / GPT-4o models
+* Improved scoring functions
+* Multi-signal detection methods
+* Correlation matrix + significance testing
 
 ## 📈 **What This Project Measures**
 
