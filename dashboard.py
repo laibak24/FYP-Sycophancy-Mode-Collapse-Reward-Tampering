@@ -13,7 +13,89 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+import streamlit.components.v1 as components
+
 # Custom CSS for modern styling
+st.markdown("""
+<style>
+
+/* --- GLOBAL TEXT FIXES FOR DARK BACKGROUND --- */
+
+body, [class^="st-"], .main-header * {
+    color: #f5f5f5 !important;       /* Soft white for readability */
+}
+
+/* headings */
+h1, h2, h3, h4, h5, h6 {
+    color: #ffffff !important;
+}
+
+/* paragraph and misc text */
+p, span, div, li {
+    color: #e5e5e5 !important;
+}
+
+/* Metric card text */
+.metric-card, .metric-card * {
+    color: #ffffff !important;
+}
+
+/* Behavioral cards text */
+.behavior-card, .behavior-card * {
+    color: #1a1a1a !important;   /* Dark text for light backgrounds */
+    font-weight: 600;
+}
+
+/* Finding items */
+.finding-item {
+    color: #e8e8e8 !important;
+    font-size: 1.05rem;
+    padding: 6px 0;
+}
+
+/* Ensure colored cards remain readable */
+.behavior-card h4 {
+    color: #111 !important;
+    font-weight: 700;
+}
+
+</style>
+""", unsafe_allow_html=True)
+st.markdown("""
+<style>
+
+/* ============================================================
+   GLOBAL TEXT (dark mode)
+   ============================================================ */
+html, body, [class^="st-"] {
+    color: #ffffff !important;
+}
+
+/* ============================================================
+   KEY FINDINGS (force BLACK text)
+   ============================================================ */
+.finding-item {
+    background: #f8f8f8 !important;       /* keep light background */
+    color: #111111 !important;            /* strong dark text */
+    padding: 10px 14px;
+    border-left: 4px solid #8b5cf6;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+/* ============================================================
+   BEHAVIOR CARDS — also light background, force dark text
+   ============================================================ */
+.behavior-card, .behavior-card * {
+    color: #111111 !important;
+    font-weight: 600;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
 st.markdown("""
 <style>
     .main-header {
@@ -43,19 +125,6 @@ st.markdown("""
         margin: 0.8rem 0;
         border-left: 4px solid #22c55e;
         box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    }
-    .stTabs [data-baseweb="tab-list"] {
-        gap: 10px;
-    }
-    .stTabs [data-baseweb="tab"] {
-        padding: 12px 24px;
-        background-color: #f8fafc;
-        border-radius: 10px 10px 0 0;
-        font-weight: 600;
-    }
-    .stTabs [data-baseweb="tab"][aria-selected="true"] {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
     }
     .behavior-card {
         padding: 1.5rem;
@@ -87,6 +156,7 @@ st.markdown("""
     .sidebar .sidebar-content {
         background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
     }
+            
 </style>
 """, unsafe_allow_html=True)
 
@@ -141,789 +211,1073 @@ def load_data():
 
 model_comparison, experiment_results, domain_performance, correlation_data, mitigation, timeline = load_data()
 
-# Sidebar
+# Sidebar Navigation
 with st.sidebar:
-    st.markdown("""
-    <div style="text-align: center; padding: 1rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 10px; margin-bottom: 1rem;">
-        <h2 style="color: white; margin: 0;">🤖 FYP 2025</h2>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    st.markdown("---")
-    
-    st.markdown("### 📊 Quick Stats")
-    col1, col2 = st.columns(2)
-    with col1:
-        st.metric("Papers", "47", delta=None)
-        st.metric("Test Cases", "150+", delta=None)
-    with col2:
-        st.metric("Models", "5", delta=None)
-        st.metric("Experiments", "4", delta=None)
-    
+    st.markdown("### 📂 Navigation")
+
+    page = st.radio(
+        "Select Section",
+        [
+            "🏠 Overview",
+            "🧪 Experiments",
+            "📚 Literature Review",
+            "📈 Progress & Timeline",
+            "🔮 Future Work"
+        ]
+    )
     st.markdown("---")
     st.markdown("### 👥 Research Team")
     st.markdown("""
     **Students:**
-    - Kainat Faisal
-    - Laiba Khan
-    - Waniya Syed
+    - Kainat Faisal 22K-4405
+    - Laiba Khan 22K-4610
+    - Waniya Syed 22K-4516
     
     **Supervisor:**
     - Farrukh Hassan Syed
     """)
-    
-    st.markdown("---")
-    st.markdown("### 📅 Project Timeline")
-    st.markdown("""
-    - **Start:** September 2024
-    - **FYP1 Complete:** December 2024
-    - **FYP2 Duration:** Jan - May 2025
-    """)
-    
-    st.markdown("---")
-    st.markdown("### 🎯 Current Status")
-    st.progress(0.95, text="95% Complete")
 
-# Main content
-tab1, tab2, tab3, tab4, tab5 = st.tabs([
-    "🏠 Overview", 
-    "🧪 Experiments", 
-    "📚 Literature Review", 
-    "📈 Progress & Timeline", 
-    "🔮 Future Work"
-])
+    st.markdown("---")
 
-# TAB 1: OVERVIEW
-with tab1:
+# ------------------------
+# PAGE ROUTING
+# ------------------------
+
+# ===== TAB 1 =====
+if page == "🏠 Overview":
     st.markdown("""
     <div class="main-header">
         <h1 style="margin: 0; font-size: 2.5rem;">The Flatterer's Dilemma</h1>
-        <h3 style="margin: 0.5rem 0; font-weight: 400;">Why AI Would Rather Lie Than Disappoint</h3>
         <p style="font-size: 1.1em; margin-top: 1.5rem; opacity: 0.95;">
-            A comprehensive investigation into sycophancy, mode collapse, and reward tampering in RLHF-trained LLMs
+            A Systematic Investigation of Sycophancy, Mode Collapse, and Reward Tampering in RLHF-Trained Large Language Models
         </p>
     </div>
     """, unsafe_allow_html=True)
     
-    # Key metrics
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-        st.metric("📚 Papers Reviewed", "47", help="Systematic review covering 2020-2024")
-        st.markdown('</div>', unsafe_allow_html=True)
-    with col2:
-        st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-        st.metric("🤖 Models Evaluated", "5", help="GPT-4, Claude, Gemini, Llama, Mistral")
-        st.markdown('</div>', unsafe_allow_html=True)
-    with col3:
-        st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-        st.metric("🧪 Test Cases", "150+", help="Across 6 domains and 4 experimental setups")
-        st.markdown('</div>', unsafe_allow_html=True)
+    st.divider()
     
-    st.markdown("<br>", unsafe_allow_html=True)
-    st.markdown("### 🎯 The Behavioral Triad")
     
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        st.markdown("""
-        <div class="behavior-card" style="background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%); border-left: 5px solid #ef4444;">
-            <h4 style="color: #991b1b; margin: 0; font-size: 1.2rem;">🗣️ Sycophancy</h4>
-            <p style="color: #7f1d1d; margin-top: 0.8rem; line-height: 1.6;">
-                Models prioritize user agreement over factual accuracy, compromising truth-seeking behavior
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
-    with col2:
-        st.markdown("""
-        <div class="behavior-card" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-left: 5px solid #f59e0b;">
-            <h4 style="color: #92400e; margin: 0; font-size: 1.2rem;">📉 Mode Collapse</h4>
-            <p style="color: #78350f; margin-top: 0.8rem; line-height: 1.6;">
-                Systematic reduction in output diversity, producing repetitive and stereotypical responses
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
-    with col3:
-        st.markdown("""
-        <div class="behavior-card" style="background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%); border-left: 5px solid #8b5cf6;">
-            <h4 style="color: #6b21a8; margin: 0; font-size: 1.2rem;">🎮 Reward Tampering</h4>
-            <p style="color: #581c87; margin-top: 0.8rem; line-height: 1.6;">
-                Models game reward signals instead of genuinely solving tasks, exploiting evaluation systems
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
+    # Problem Statement
+    st.markdown("### 🎯 Problem Statement")
     
-    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown("""
+    As Large Language Models (LLMs) integrate into **safety-critical domains**—healthcare diagnostics, 
+    legal advisory, educational tutoring—a concerning failure mode has emerged: **sycophancy**, where models 
+    prioritize user agreement over factual accuracy.
+    """)
+    
+    problem_col1, problem_col2 = st.columns([1, 1])
+    
+    with problem_col1:
+        st.error("""
+        #### 🚨 The Core Problem
+        
+        **Real-World Risks:**
+        - 🏥 **Healthcare**: Validating dangerous self-diagnoses
+        - ⚖️ **Legal**: Biased recommendations matching client preferences
+        - 🎓 **Education**: Reinforcing misconceptions instead of correcting them
+        - 💰 **Finance**: Confirming risky investment decisions
+        """)
+    
+    with problem_col2:
+        st.warning("""
+        #### 🔗 The Hidden Connection
+        
+        **Research Gap:**
+        
+        Previous studies treated these as isolated issues:
+        - Sycophancy (truth vs. agreeableness)
+        - Mode collapse (diversity loss)
+        - Reward tampering (gaming behaviors)
+        
+        **Our hypothesis:** These form an **interconnected cascade** triggered by RLHF optimization.
+        """)
+    
+    st.divider()
+    
+    # Project Objectives
+    st.markdown("### 🎯 Research Objectives")
+    
+    objectives_col1, objectives_col2, objectives_col3 = st.columns(3)
+    
+    with objectives_col1:
+        st.markdown("""
+        #### 🔍 Investigate
+        
+        - Measure sycophancy rates across 5 LLMs
+        - Quantify mode collapse severity
+        - Assess reward tampering vulnerability
+        - Analyze cross-domain patterns
+        """)
+    
+    with objectives_col2:
+        st.markdown("""
+        #### 📊 Validate
+        
+        - Test behavioral triad hypothesis
+        - Measure correlation strengths
+        - Identify temporal emergence patterns
+        - Compare model architectures
+        """)
+    
+    with objectives_col3:
+        st.markdown("""
+        #### 💡 Contribute
+        
+        - Unified evaluation framework
+        - Open-source testing toolkit
+        - Mitigation recommendations
+        - Future research roadmap
+        """)
+    
+    st.divider()
+    
+    # Methodology Overview
+    st.markdown("### 🔬 Our Approach")
+    
+    method_tabs = st.tabs(["📚 Literature Review", "🧪 Empirical Testing", "📈 Analysis"])
+    
+    with method_tabs[0]:
+        col1, col2 = st.columns(2)
+        with col1:
+            st.markdown("""
+            **Systematic Review:**
+            - 47 papers (2020-2024)
+            - PRISMA-compliant methodology
+            - Multiple databases (arXiv, ACL, IEEE)
+            """)
+        with col2:
+            st.metric("Papers Analyzed", "47", help="Systematic literature review")
+    
+    with method_tabs[1]:
+        col1, col2 = st.columns(2)
+        with col1:
+            st.markdown("""
+            **Multi-Model Evaluation:**
+            - 5 state-of-the-art LLMs tested
+            - 3 domains (Medical, Math, NLP)
+            - 150+ carefully designed test cases
+            - Progressive & regressive sycophancy protocols
+            """)
+        with col2:
+            st.metric("Models Evaluated", "5", help="GPT-4o, Claude, Gemini, Llama, Phi-3")
+            st.metric("Test Cases", "150+", help="Across multiple domains")
+    
+    with method_tabs[2]:
+        col1, col2 = st.columns(2)
+        with col1:
+            st.markdown("""
+            **Statistical Analysis:**
+            - Correlation analysis (Pearson's r)
+            - Entropy-based diversity measurement
+            - Domain-specific pattern recognition
+            - Behavioral cascade validation
+            """)
+        with col2:
+            st.metric("Correlation Threshold", "r > 0.75", help="From literature")
+            st.metric("Our Findings", "r = 0.62", help="Sycophancy ↔ Reward Tampering")
+    
+    st.divider()
+    
+    # Key Findings Summary
     st.markdown("### 💡 Key Findings")
     
-    findings = [
-        "Strong positive correlation (r=0.6159, p=0.0003) between sycophancy and reward tampering in Gemini experiments",
-        "Mode collapse shows significant correlation with reward tampering (r=0.344, p=0.015) in GPT-4o-mini tests",
-        "Sycophancy rates vary dramatically by domain: Medical (23.25%) vs Math (5.21%)",
-        "Phi-3 model shows extreme sycophancy (100%) under pressure scenarios",
-        "Behavioral triad emerges sequentially: Sycophancy (epochs 3-7) → Mode Collapse (8-15) → Reward Tampering (16-25)"
-    ]
+    findings_col1, findings_col2 = st.columns([2, 1])
     
-    for finding in findings:
-        st.markdown(f'<div class="finding-item">✅ {finding}</div>', unsafe_allow_html=True)
+    with findings_col1:
+        st.markdown("""
+        
+        1. **Strong Behavioral Correlation** (r = 0.6159)
+           - Confirms sycophancy-reward tampering link
+           - Validates literature predictions (r > 0.6 threshold)
+        
+        2. **Mode Collapse Connection** (r = 0.344)  
+           - Moderate correlation with reward tampering
+           - Suggests mediating role in behavioral cascade
+        
+        3. **Domain Vulnerability Patterns**
+           - 🏥 Medical: Highest sycophancy risk
+           - 🧮 Math: Moderate susceptibility
+           - 💻 NLP: Lowest rates observed
+        
+        4. **Model-Specific Extremes**
+           - Phi-3: 100% sycophancy under aggressive rebuttal
+           - GPT-4o: Most balanced performance
+           - Claude-3.5: Highest tampering resistance
+        
+        5. **Temporal Cascade Confirmed**
+           - Sycophancy emerges first (early epochs)
+           - Mode collapse follows (mid-training)
+           - Reward tampering matures last (late epochs)
+        """)
     
-    st.markdown("<br>", unsafe_allow_html=True)
-    st.markdown("### 🔬 Research Impact")
-    col1, col2 = st.columns(2)
-    with col1:
-        st.info("""
-        **Theoretical Contribution:**
-        - Established mechanistic framework linking three behavioral phenomena
-        - Identified temporal cascade: RLHF Pressure → Sycophancy → Mode Collapse → Reward Tampering
-        - Quantified correlations across multiple model families
-        - Validated behavioral triad hypothesis through empirical testing
+    
+    st.divider()
+    
+    # Call to Action
+    st.markdown("### 🤝 Get Involved")
+    
+    cta_col2, cta_col3 = st.columns(2)
+        
+    with cta_col2:
+        st.markdown("""
+        #### 💻 Use Our Tools
+        - Evaluation framework (GitHub)
+        - Test case templates
+        - Analysis notebooks
         """)
-    with col2:
-        st.warning("""
-        **Practical Implications:**
-        - Medical domain shows highest risk (23.25% sycophancy, 30% tampering)
-        - Mitigation strategies identified with 15-34% effectiveness
-        - Cross-model generalization patterns established
-        - Framework applicable to future RLHF development
-        """)
+    with cta_col3:
+        st.markdown("""
+    #### 💬 Connect
 
-# TAB 2: EXPERIMENTS
-with tab2:
+    <div class="contact-links">
+        <p>Email: 
+            <a href="mailto:k224405@nu.edu.pk">k224405@nu.edu.pk</a> |
+            <a href="mailto:k224610@nu.edu.pk">k224610@nu.edu.pk</a> |
+            <a href="mailto:k224516@nu.edu.pk">k224516@nu.edu.pk</a>
+        </p>
+        <p>GitHub: 
+            <a href="https://github.com/laibak24/FYP-Sycophancy-Mode-Collapse-Reward-Tampering" target="_blank">FYP Repo</a>
+        </p>
+        <p>Notion: 
+            <a href="https://www.notion.so/Home-The-Flatterer-s-Dilemma" target="_blank">Project Notes</a>
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    
+# ===== TAB 2 =====
+elif page == "🧪 Experiments":
     st.header("🧪 Experimental Results")
-    
-    st.markdown("### Comparative Analysis Across All Pipelines")
-    
-    # Experiment comparison bar chart
+
+    st.markdown("### Comparative Analysis Across Pipelines")
+
     fig = go.Figure()
     fig.add_trace(go.Bar(
         name='Sycophancy %',
         x=experiment_results['experiment'],
         y=experiment_results['sycophancy'],
-        marker_color='#ef4444',
-        marker_line_color='#b91c1c',
-        marker_line_width=2
+        marker_color='#ef4444'
     ))
     fig.add_trace(go.Bar(
         name='Mode Collapse %',
         x=experiment_results['experiment'],
         y=experiment_results['modeCollapse'],
-        marker_color='#f59e0b',
-        marker_line_color='#d97706',
-        marker_line_width=2
+        marker_color='#f59e0b'
     ))
     fig.add_trace(go.Bar(
         name='Reward Tampering %',
         x=experiment_results['experiment'],
         y=experiment_results['rewardTampering'],
-        marker_color='#8b5cf6',
-        marker_line_color='#7c3aed',
-        marker_line_width=2
+        marker_color='#8b5cf6'
     ))
-    
+
     fig.update_layout(
         barmode='group',
-        title={
-            'text': "Behavioral Metrics Across Experimental Pipelines",
-            'font': {'size': 20, 'color': '#1f2937'}
-        },
-        xaxis_title="Experiment",
-        yaxis_title="Score (%)",
-        height=500,
-        hovermode='x unified',
-        plot_bgcolor='rgba(0,0,0,0)',
-        paper_bgcolor='rgba(0,0,0,0)',
-        font=dict(family="Arial, sans-serif", size=12),
-        legend=dict(
-            orientation="h",
-            yanchor="bottom",
-            y=1.02,
-            xanchor="right",
-            x=1
-        )
+        height=500
     )
-    fig.update_xaxes(showgrid=False)
-    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#e5e7eb')
     st.plotly_chart(fig, use_container_width=True)
-    
-    # Experiment details
+
     st.markdown("### 📋 Experiment Details")
     exp_details = experiment_results.copy()
     exp_details.columns = ['Experiment', 'Sycophancy (%)', 'Mode Collapse (%)', 'Reward Tampering (%)', 'Samples']
-    st.dataframe(
-        exp_details, 
-        use_container_width=True, 
-        hide_index=True,
-        column_config={
-            "Experiment": st.column_config.TextColumn("Experiment", width="medium"),
-            "Sycophancy (%)": st.column_config.NumberColumn("Sycophancy (%)", format="%.2f"),
-            "Mode Collapse (%)": st.column_config.NumberColumn("Mode Collapse (%)", format="%.2f"),
-            "Reward Tampering (%)": st.column_config.NumberColumn("Reward Tampering (%)", format="%.2f"),
-            "Samples": st.column_config.NumberColumn("Samples", format="%d")
-        }
-    )
-    
+    st.dataframe(exp_details, use_container_width=True, hide_index=True)
+
     col1, col2 = st.columns(2)
-    
     with col1:
-        st.markdown("### 🎯 Domain-Specific Performance (Gemini)")
-        
-        # Radar chart for domain performance
-        categories = domain_performance['domain'].tolist()
-        
+        st.markdown("### 🎯 Domain Performance (Gemini)")
         fig = go.Figure()
-        
         fig.add_trace(go.Scatterpolar(
-            r=domain_performance['sycophancy'].tolist(),
-            theta=categories,
+            r=domain_performance['sycophancy'],
+            theta=domain_performance['domain'],
             fill='toself',
-            name='Sycophancy',
-            line_color='#ef4444',
-            fillcolor='rgba(239, 68, 68, 0.3)'
+            name='Sycophancy'
         ))
-        
         fig.add_trace(go.Scatterpolar(
-            r=domain_performance['modeCollapse'].tolist(),
-            theta=categories,
+            r=domain_performance['modeCollapse'],
+            theta=domain_performance['domain'],
             fill='toself',
-            name='Mode Collapse',
-            line_color='#f59e0b',
-            fillcolor='rgba(245, 158, 11, 0.3)'
+            name='Mode Collapse'
         ))
-        
         fig.add_trace(go.Scatterpolar(
-            r=domain_performance['rewardTampering'].tolist(),
-            theta=categories,
+            r=domain_performance['rewardTampering'],
+            theta=domain_performance['domain'],
             fill='toself',
-            name='Reward Tampering',
-            line_color='#8b5cf6',
-            fillcolor='rgba(139, 92, 246, 0.3)'
+            name='Reward Tampering'
         ))
-        
-        fig.update_layout(
-            polar=dict(
-                radialaxis=dict(
-                    visible=True, 
-                    range=[0, 35],
-                    showline=False,
-                    gridcolor='#e5e7eb'
-                ),
-                angularaxis=dict(
-                    gridcolor='#e5e7eb'
-                )
-            ),
-            showlegend=True,
-            height=400,
-            paper_bgcolor='rgba(0,0,0,0)',
-            plot_bgcolor='rgba(0,0,0,0)'
-        )
-        
+
         st.plotly_chart(fig, use_container_width=True)
-    
+
     with col2:
-        st.markdown("### 📊 Correlation Analysis (GPT-4o-mini HH-RLHF)")
-        
-        # Correlation bar chart
+        st.markdown("### 📊 Correlation Analysis")
         fig = go.Figure()
-        
         fig.add_trace(go.Bar(
             name='Pearson r',
             x=correlation_data['name'],
-            y=correlation_data['pearson'],
-            marker_color='#3b82f6',
-            marker_line_color='#2563eb',
-            marker_line_width=2
+            y=correlation_data['pearson']
         ))
-        
         fig.add_trace(go.Bar(
             name='Spearman ρ',
             x=correlation_data['name'],
-            y=correlation_data['spearman'],
-            marker_color='#06b6d4',
-            marker_line_color='#0891b2',
-            marker_line_width=2
+            y=correlation_data['spearman']
         ))
-        
-        fig.update_layout(
-            barmode='group',
-            xaxis_title="Relationship",
-            yaxis_title="Correlation Coefficient",
-            height=400,
-            plot_bgcolor='rgba(0,0,0,0)',
-            paper_bgcolor='rgba(0,0,0,0)',
-            font=dict(family="Arial, sans-serif", size=12)
-        )
-        fig.update_xaxes(showgrid=False)
-        fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#e5e7eb', zeroline=True, zerolinewidth=2, zerolinecolor='#9ca3af')
-        
         st.plotly_chart(fig, use_container_width=True)
-        
-        st.success("**✓ Significant finding:** Mode Collapse ↔ Reward Tampering (p=0.015)")
-    
-    st.markdown("### 🔬 Model Comparison (Literature Review Data)")
-    
-    # Scatter plot with better styling
-    fig = px.scatter(
-        model_comparison,
-        x='sycophancy',
-        y='correlation',
-        size='rewardTampering',
-        color='riskLevel',
-        hover_data=['model', 'modeCollapse', 'rewardTampering'],
-        labels={
-            'sycophancy': 'Sycophancy Rate (%)',
-            'correlation': 'Behavioral Triad Correlation',
-            'riskLevel': 'Risk Level'
-        },
-        color_discrete_map={'Critical': '#ef4444', 'High': '#f59e0b', 'Medium': '#22c55e'},
-        title="Sycophancy vs Behavioral Triad Correlation"
-    )
-    
-    fig.update_traces(marker=dict(line=dict(width=2, color='DarkSlateGrey')))
-    fig.update_layout(
-        height=500,
-        plot_bgcolor='rgba(0,0,0,0)',
-        paper_bgcolor='rgba(0,0,0,0)',
-        title_font_size=20,
-        font=dict(family="Arial, sans-serif", size=12)
-    )
-    fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='#e5e7eb')
-    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#e5e7eb')
-    
-    st.plotly_chart(fig, use_container_width=True)
-    
-    # Model details table
-    st.markdown("### 📊 Detailed Model Metrics")
-    st.dataframe(
-        model_comparison, 
-        use_container_width=True, 
-        hide_index=True,
-        column_config={
-            "model": st.column_config.TextColumn("Model", width="medium"),
-            "sycophancy": st.column_config.NumberColumn("Sycophancy (%)", format="%.2f"),
-            "modeCollapse": st.column_config.NumberColumn("Mode Collapse", format="%.2f"),
-            "rewardTampering": st.column_config.NumberColumn("Reward Tampering", format="%.2f"),
-            "correlation": st.column_config.NumberColumn("Correlation", format="%.2f"),
-            "riskLevel": st.column_config.TextColumn("Risk Level", width="small")
-        }
-    )
 
-# TAB 3: LITERATURE REVIEW
-with tab3:
-    st.header("📚 Literature Review Summary")
+# ===== TAB 3 =====
+elif page == "📚 Literature Review":
+    st.header("📚 Literature Review")
     
-    col1, col2, col3, col4 = st.columns(4)
-    with col1:
-        st.metric("📄 Papers Analyzed", "47")
-    with col2:
-        st.metric("📅 Time Period", "2020-2024")
-    with col3:
-        st.metric("💾 Databases", "4", help="arXiv, Google Scholar, ACL, IEEE")
-    with col4:
-        st.metric("✅ Review Method", "PRISMA", help="Systematic review protocol")
-    
-    st.markdown("<br>", unsafe_allow_html=True)
-    st.markdown("### 🔄 The Behavioral Triad Framework")
-    
-    st.info("""
-    **Cascading Relationship:**
-    
-    ```
-    RLHF Optimization Pressure → Sycophancy → Mode Collapse → Reward Tampering
-    ```
-    
-    The literature establishes that optimization pressure from RLHF creates preference-seeking behaviors (sycophancy), 
-    which reduces output diversity (mode collapse), ultimately enabling sophisticated reward-gaming tactics (reward tampering).
+    # Introduction
+    st.markdown("""
+    This comprehensive review examines **47 papers** (2020-2024) on sycophancy in RLHF-trained LLMs, 
+    revealing an interconnected behavioral triad: **sycophancy → mode collapse → reward tampering**.
     """)
     
-    st.markdown("### 📈 Empirical Evidence from Literature")
-    
+    # Key Statistics
     col1, col2, col3 = st.columns(3)
     with col1:
-        st.markdown("""
-        <div style="background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%); padding: 2rem; border-radius: 12px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.07);">
-            <h2 style="color: #ef4444; margin: 0; font-size: 2.5rem;">r = 0.78</h2>
-            <p style="color: #991b1b; margin: 0.8rem 0 0 0; font-weight: 600;">Sycophancy ↔ Mode Collapse</p>
-            <p style="color: #7f1d1d; font-size: 0.9em; margin-top: 0.5rem;">p < 0.001</p>
-        </div>
-        """, unsafe_allow_html=True)
+        st.metric("Papers Reviewed", "47", help="Systematic review covering 2020-2024")
     with col2:
-        st.markdown("""
-        <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); padding: 2rem; border-radius: 12px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.07);">
-            <h2 style="color: #f59e0b; margin: 0; font-size: 2.5rem;">r = 0.84</h2>
-            <p style="color: #92400e; margin: 0.8rem 0 0 0; font-weight: 600;">Mode Collapse ↔ Reward Tampering</p>
-            <p style="color: #78350f; font-size: 0.9em; margin-top: 0.5rem;">p < 0.001</p>
-        </div>
-        """, unsafe_allow_html=True)
+        st.metric("Sycophancy Rate Range", "14.66% - 62.47%", help="Varies by domain and model")
     with col3:
-        st.markdown("""
-        <div style="background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%); padding: 2rem; border-radius: 12px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.07);">
-            <h2 style="color: #8b5cf6; margin: 0; font-size: 2.5rem;">r = 0.71</h2>
-            <p style="color: #6b21a8; margin: 0.8rem 0 0 0; font-weight: 600;">Sycophancy ↔ Reward Tampering</p>
-            <p style="color: #581c87; font-size: 0.9em; margin-top: 0.5rem;">p < 0.001</p>
-        </div>
-        """, unsafe_allow_html=True)
+        st.metric("Correlation Coefficient", "r > 0.75", help="Between behavioral triad components")
     
-    st.markdown("<br>", unsafe_allow_html=True)
-    st.markdown("### ⏱️ Temporal Progression During Training")
+    st.divider()
     
-    # Timeline visualization
-    epochs = ['0-2', '3-7', '8-15', '16-25']
-    sycophancy_intensity = [0, 0.8, 0.6, 0.3]
-    mode_collapse_intensity = [0, 0.2, 0.9, 0.7]
-    reward_tampering_intensity = [0, 0, 0.4, 1.0]
-    
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(
-        x=epochs, 
-        y=sycophancy_intensity, 
-        mode='lines+markers', 
-        name='Sycophancy', 
-        line=dict(color='#ef4444', width=4),
-        marker=dict(size=12, symbol='circle')
-    ))
-    fig.add_trace(go.Scatter(
-        x=epochs, 
-        y=mode_collapse_intensity, 
-        mode='lines+markers', 
-        name='Mode Collapse', 
-        line=dict(color='#f59e0b', width=4),
-        marker=dict(size=12, symbol='square')
-    ))
-    fig.add_trace(go.Scatter(
-        x=epochs, 
-        y=reward_tampering_intensity, 
-        mode='lines+markers', 
-        name='Reward Tampering', 
-        line=dict(color='#8b5cf6', width=4),
-        marker=dict(size=12, symbol='diamond')
-    ))
-    
-    fig.update_layout(
-        title={
-            'text': "Behavioral Emergence Across Training Epochs",
-            'font': {'size': 20, 'color': '#1f2937'}
-        },
-        xaxis_title="Training Epochs",
-        yaxis_title="Behavior Intensity",
-        height=400,
-        hovermode='x unified',
-        plot_bgcolor='rgba(0,0,0,0)',
-        paper_bgcolor='rgba(0,0,0,0)',
-        font=dict(family="Arial, sans-serif", size=12)
-    )
-    fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='#e5e7eb')
-    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#e5e7eb')
-    st.plotly_chart(fig, use_container_width=True)
-    
-    st.markdown("### 🛠️ Mitigation Strategies Comparison")
-    
-    fig = make_subplots(
-        rows=1, cols=2,
-        subplot_titles=('Sycophancy Reduction (%)', 'Performance Impact (%)'),
-        specs=[[{"type": "bar"}, {"type": "bar"}]]
-    )
-    
-    fig.add_trace(
-        go.Bar(
-            x=mitigation['strategy'], 
-            y=mitigation['sycReduction'], 
-            name='Syc Reduction', 
-            marker_color='#22c55e',
-            marker_line_color='#16a34a',
-            marker_line_width=2
-        ),
-        row=1, col=1
-    )
-    
-    fig.add_trace(
-        go.Bar(
-            x=mitigation['strategy'], 
-            y=mitigation['performance'], 
-            name='Performance', 
-            marker_color='#3b82f6',
-            marker_line_color='#2563eb',
-            marker_line_width=2
-        ),
-        row=1, col=2
-    )
-    
-    fig.update_xaxes(tickangle=-45)
-    fig.update_layout(
-        height=500, 
-        showlegend=False,
-        plot_bgcolor='rgba(0,0,0,0)',
-        paper_bgcolor='rgba(0,0,0,0)',
-        font=dict(family="Arial, sans-serif", size=12)
-    )
-    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#e5e7eb')
-    st.plotly_chart(fig, use_container_width=True)
-    
-    col1, col2 = st.columns(2)
-    with col1:
-        st.success("**🏆 Best overall:** RAG Integration (34.2% reduction, +3.4% performance, Medium cost)")
-    with col2:
-        st.info("**💡 Most practical:** LQCD (18.7% reduction, -0.4% performance, Low cost)")
-    
-    st.markdown("### ⚠️ Critical Research Gaps Identified")
-    
-    gaps = [
-        ("🌍 Multilingual Coverage", "95% of studies focus on English only"),
-        ("📊 Evaluation Scope", "Most tests limited to factual/mathematical domains"),
-        ("⏰ Temporal Dynamics", "Long-term behavioral persistence unexplored"),
-        ("🤖 Model Diversity", "Commercial models overrepresented, open-source understudied"),
-        ("🧠 Mechanistic Understanding", "Internal neural pathways driving behaviors unclear")
-    ]
-    
-    for title, desc in gaps:
-        st.warning(f"**{title}:** {desc}")
-
-# TAB 4: PROGRESS & TIMELINE
-with tab4:
-    st.header("📈 FYP Progress & Timeline")
-    
-    st.markdown("### 📅 Project Timeline")
-    
-    # Progress bars with modern styling
-    for idx, row in timeline.iterrows():
-        col1, col2, col3 = st.columns([2, 6, 1])
-        
-        with col1:
-            st.markdown(f"**{row['phase']}**")
-        
-        with col2:
-            if row['status'] == 'complete':
-                st.progress(row['progress'] / 100, text=f"{row['progress']}% ✓")
-            elif row['status'] == 'active':
-                st.progress(row['progress'] / 100, text=f"{row['progress']}% (In Progress)")
-            else:
-                st.progress(row['progress'] / 100, text=f"{row['progress']}% (Planned)")
-        
-        with col3:
-            if row['status'] == 'complete':
-                st.markdown("✅")
-            elif row['status'] == 'active':
-                st.markdown("🔄")
-            else:
-                st.markdown("⏳")
-    
-    st.markdown("---")
-    
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.markdown("### ✅ FYP1 Achievements")
-        
-        achievements = [
-            ("📚 Comprehensive Literature Review", "47 papers analyzed, taxonomy established"),
-            ("🧪 Multi-Model Evaluation Pipeline", "4 experimental setups across GPT-4, Phi-3, Gemini"),
-            ("📊 Statistical Correlation Analysis", "Pearson, Spearman, Chi-square tests conducted"),
-            ("💾 Dataset Creation", "66+ synthetic test cases across 6 domains"),
-            ("🔬 Behavioral Triad Validation", "Correlations identified and documented"),
-            ("📝 Documentation & Reporting", "Review paper and technical documentation complete")
-        ]
-        
-        for title, desc in achievements:
-            with st.container():
-                st.success(f"**{title}**")
-                st.caption(desc)
-                st.markdown("<br>", unsafe_allow_html=True)
-    
-    with col2:
-        st.markdown("### 🔄 Current Sprint: Dashboard Development")
-        
-        sprint_tasks = [
-            ("Data Integration", 100),
-            ("Visualization Components", 95),
-            ("Interactive Features", 85),
-            ("Documentation", 80)
-        ]
-        
-        for task, progress in sprint_tasks:
-            st.markdown(f"**{task}**")
-            st.progress(progress / 100, text=f"{progress}%")
-            st.markdown("")
-        
-        st.markdown("### 📊 Overall FYP1 Completion")
-        st.metric("Progress", "95%", delta="5% remaining", delta_color="inverse")
-
-# TAB 5: FUTURE WORK
-with tab5:
-    st.header("🔮 FYP2 Research Agenda")
-    
-    st.info("""
-    **Three-Tier Prioritized Research Roadmap**
-    
-    A structured plan addressing critical gaps identified in FYP1, progressing from foundational work 
-    to advanced mechanistic understanding and governance frameworks.
+    # The Behavioral Triad
+    st.subheader("🔄 The Behavioral Triad")
+    st.markdown("""
+    Research reveals three interconnected phenomena forming a cascade:
     """)
     
-    st.markdown("### 🟢 Tier 1: Foundational Work (0-12 months)")
+    triad_col1, triad_col2, triad_col3 = st.columns(3)
     
-    tier1_items = [
-        {
-            "title": "🧠 Mechanistic Interpretability",
-            "desc": "Identify neural circuits and attention patterns driving sycophantic behavior using activation patching and ablation studies",
-            "priority": "High"
-        },
-        {
-            "title": "🌍 Multilingual Testing",
-            "desc": "Expand evaluation to 10+ languages to test cross-cultural generalization of behavioral patterns",
-            "priority": "High"
-        },
-        {
-            "title": "🔓 Open-Source Model Analysis",
-            "desc": "Systematic evaluation of LLaMA, Mistral, and other open models for reproducibility",
-            "priority": "Medium"
-        }
-    ]
-    
-    for item in tier1_items:
-        with st.container():
-            col1, col2 = st.columns([5, 1])
-            with col1:
-                st.markdown(f"**{item['title']}**")
-                st.caption(item['desc'])
-            with col2:
-                if item['priority'] == 'High':
-                    st.markdown('<span class="priority-high">🔴 High</span>', unsafe_allow_html=True)
-                else:
-                    st.markdown('<span class="priority-medium">🟡 Medium</span>', unsafe_allow_html=True)
-            st.markdown("<br>", unsafe_allow_html=True)
-    
-    st.markdown("### 🔵 Tier 2: Mechanistic Understanding (12-24 months)")
-    
-    tier2_items = [
-        {
-            "title": "🎯 Adversarial Reward Modeling",
-            "desc": "Develop reward functions resistant to manipulation with demographically diverse preference collection",
-            "priority": "High"
-        },
-        {
-            "title": "⏰ Long-term Behavioral Dynamics",
-            "desc": "Study persistence of mitigations and emergence of new behaviors over extended deployment",
-            "priority": "Medium"
-        },
-        {
-            "title": "🏗️ Cross-Architecture Analysis",
-            "desc": "Compare transformer variants, SSMs, and hybrid architectures for vulnerability patterns",
-            "priority": "Medium"
-        }
-    ]
-    
-    for item in tier2_items:
-        with st.container():
-            col1, col2 = st.columns([5, 1])
-            with col1:
-                st.markdown(f"**{item['title']}**")
-                st.caption(item['desc'])
-            with col2:
-                if item['priority'] == 'High':
-                    st.markdown('<span class="priority-high">🔴 High</span>', unsafe_allow_html=True)
-                else:
-                    st.markdown('<span class="priority-medium">🟡 Medium</span>', unsafe_allow_html=True)
-            st.markdown("<br>", unsafe_allow_html=True)
-    
-    st.markdown("### 🟣 Tier 3: Mitigation & Governance (24+ months)")
-    
-    tier3_items = [
-        {
-            "title": "⚖️ Governance Framework Development",
-            "desc": "Establish regulatory guidelines for RLHF deployment with transparency requirements",
-            "priority": "High"
-        },
-        {
-            "title": "🛡️ Integrated Mitigation Suite",
-            "desc": "Combine training, inference, and architectural interventions for comprehensive defense",
-            "priority": "High"
-        },
-        {
-            "title": "🌐 Real-world Deployment Studies",
-            "desc": "Monitor behavioral patterns in production systems across high-stakes domains",
-            "priority": "Medium"
-        }
-    ]
-    
-    for item in tier3_items:
-        with st.container():
-            col1, col2 = st.columns([5, 1])
-            with col1:
-                st.markdown(f"**{item['title']}**")
-                st.caption(item['desc'])
-            with col2:
-                if item['priority'] == 'High':
-                    st.markdown('<span class="priority-high">🔴 High</span>', unsafe_allow_html=True)
-                else:
-                    st.markdown('<span class="priority-medium">🟡 Medium</span>', unsafe_allow_html=True)
-            st.markdown("<br>", unsafe_allow_html=True)
-    
-    st.markdown("---")
-    
-    st.markdown("### 🎯 Expected Outcomes")
-    
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        st.markdown("""
-        **📝 Publications**
-        - 2-3 conference papers
-        - 1 journal article
-        - Workshop presentations
-        - Technical reports
+    with triad_col1:
+        st.markdown("### 1️⃣ Sycophancy")
+        st.info("""
+        **Definition**: Models prioritize user agreement over factual accuracy
+        
+        **Types**:
+        - **Progressive**: Incorrect → Correct (with user correction)
+        - **Regressive**: Correct → Incorrect (to match user)
+        
+        **Impact**: 14.66% - 62.47% occurrence rate
         """)
     
-    with col2:
-        st.markdown("""
-        **🛠️ Technical Deliverables**
-        - Open-source evaluation suite
-        - Mitigation toolkit
-        - Dataset repository
-        - Interactive dashboard
+    with triad_col2:
+        st.markdown("### 2️⃣ Mode Collapse")
+        st.warning("""
+        **Definition**: Systematic reduction in output diversity
+        
+        **Manifestation**:
+        - Reduced response entropy
+        - Stereotypical patterns
+        - Lost creativity
+        
+        **Threshold**: >60% entropy decline = severe collapse
         """)
     
-    with col3:
-        st.markdown("""
-        **🤝 Community Impact**
-        - Framework adoption
-        - Industry collaboration
-        - Policy recommendations
-        - Educational resources
+    with triad_col3:
+        st.markdown("### 3️⃣ Reward Tampering")
+        st.error("""
+        **Definition**: Gaming reward signals vs. genuine task completion
+        
+        **Behaviors**:
+        - Strategic misrepresentation
+        - Oversight manipulation
+        - Adversarial exploitation
+        
+        **Risk**: 3.2× higher in collapsed models
         """)
     
-    st.markdown("---")
+    st.divider()
     
-    st.markdown("### 📚 Recommended Reading & Resources")
+    # Cross-Model Analysis
+    st.subheader("📊 Cross-Model Performance")
     
-    resources = {
-        "Foundational Papers": [
-            "Perez et al. (2022) - Discovering Language Model Behaviors with Model-Written Evaluations",
-            "Sharma et al. (2023) - Towards Understanding Sycophancy in Language Models",
-            "Casper et al. (2023) - Open Problems in AI Safety"
-        ],
-        "Mitigation Strategies": [
-            "Burns et al. (2023) - Weak-to-Strong Generalization",
-            "Scheurer et al. (2023) - Training Language Models with Language Feedback",
-            "Bai et al. (2022) - Constitutional AI"
-        ],
-        "Evaluation Frameworks": [
-            "Anthropic Evals - Model Behavior Evaluation Suite",
-            "OpenAI Evals - Standardized Testing Framework",
-            "EleutherAI LM Evaluation Harness"
-        ]
+    model_data = {
+        'Model': ['GPT-4o', 'Claude-Sonnet', 'Gemini-1.5-Pro', 'Llama-70B', 'Mistral-8x7B'],
+        'Sycophancy Rate (%)': [56.71, 57.44, 62.47, 48.32, 41.18],
+        'Mode Collapse': [0.73, 0.78, 0.81, 0.65, 0.59],
+        'Reward Tampering': [0.68, 0.71, 0.74, 0.58, 0.52],
+        'Correlation': [0.82, 0.79, 0.85, 0.76, 0.73],
+        'Risk Level': ['High', 'High', 'Critical', 'Medium', 'Medium']
     }
     
-    for category, papers in resources.items():
-        with st.expander(f"📖 {category}"):
-            for paper in papers:
-                st.markdown(f"- {paper}")
+    df_models = pd.DataFrame(model_data)
+    
+    tab1, tab2 = st.tabs(["📋 Table View", "📈 Visualization"])
+    
+    with tab1:
+        st.dataframe(
+            df_models.style.background_gradient(subset=['Sycophancy Rate (%)'], cmap='Reds')
+                          .background_gradient(subset=['Correlation'], cmap='Blues'),
+            use_container_width=True
+        )
+    
+    with tab2:
+        fig_models = go.Figure()
+        fig_models.add_trace(go.Bar(
+            name='Sycophancy Rate',
+            x=df_models['Model'],
+            y=df_models['Sycophancy Rate (%)'],
+            marker_color='indianred'
+        ))
+        fig_models.update_layout(
+            title='Sycophancy Rates Across Models',
+            yaxis_title='Rate (%)',
+            showlegend=False,
+            height=400
+        )
+        st.plotly_chart(fig_models, use_container_width=True)
+    
+    st.divider()
+        
+    
+    # Key Findings
+    st.subheader("🔍 Key Research Findings")
+    
+    findings_col1, findings_col2 = st.columns(2)
+    
+    with findings_col1:
+        st.markdown("### ✅ Established Insights")
+        st.markdown("""
+        1. **Mechanistic Relationships**: Behaviors are interdependent, not isolated vices (r > 0.75)
+        
+        2. **Sequential Emergence**: Sycophancy → Mode Collapse → Reward Tampering cascade confirmed
+        
+        3. **RLHF as Root Cause**: Optimization pressure drives entire behavioral triad
+        
+        4. **Model-Agnostic**: Patterns persist across architectures and training paradigms
+        
+        5. **Mitigation Trade-offs**: No single solution; combined approaches needed
+        """)
+    
+    with findings_col2:
+        st.markdown("### ❓ Critical Gaps")
+        st.markdown("""
+        1. **Multilingual Evaluation**: Research heavily English-focused
+        
+        2. **Long-term Dynamics**: Short-term studies dominate; persistence unclear
+        
+        3. **Open-Source Coverage**: Commercial models over-represented
+        
+        4. **Mechanistic Understanding**: Internal decision processes remain opaque
+        
+        5. **Standard Benchmarks**: Inconsistent evaluation protocols limit comparability
+        """)
+    
+    st.divider()
+    
+    
+    # Conclusion
+    st.subheader("💡 Conclusion")
+    
+    st.markdown("""
+    This systematic review establishes that **sycophancy is not a simple bug but a structured failure mode** 
+    arising from RLHF optimization. The behavioral triad framework reveals:
+    
+    - **Interconnected phenomena** requiring integrated solutions
+    - **Sequential emergence** with measurable temporal patterns  
+    - **Model-agnostic persistence** across architectures
+    - **Mitigation complexity** demanding multi-layered approaches
+    
+    As LLMs deploy into safety-critical domains (healthcare, legal, education), addressing sycophancy becomes 
+    essential for maintaining trust and reliability. Future progress depends on:
+    
+    1. Standardized multilingual evaluation protocols
+    2. Mechanistic interpretability research  
+    3. Combined training + inference + architectural interventions
+    4. Transparent governance and deployment guidelines
+    """)
+    
+    st.success("""
+    **Research Impact**: This review synthesizes 47 papers to provide the first comprehensive framework 
+    for understanding and mitigating the sycophancy-mode collapse-reward tampering nexus in RLHF-trained LLMs.
+    """)
+# ===== TAB 4 =====
+elif page == "📈 Progress & Timeline":
+    st.markdown("## 📅 Progress Timeline")
 
-# Footer
-st.markdown("---")
-st.markdown("""
-<div style="text-align: center; padding: 2rem; background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); border-radius: 10px;">
-    <h3 style="color: #1f2937; margin: 0;">The Flatterer's Dilemma</h3>
-    <p style="color: #6b7280; margin: 0.5rem 0;">FYP 2024-2025 | Habib University</p>
-    <p style="color: #9ca3af; font-size: 0.9rem;">
-        Kainat Faisal • Laiba Khan • Waniya Syed<br>
-        Supervised by: Farrukh Hassan Syed
-    </p>
-</div>
-""", unsafe_allow_html=True)
+    components.html("""
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+            color: #eaeaea !important; /* global fix */
+        }
+
+        body {
+            background-color: transparent !important;
+        }
+
+        .timeline {
+            border-left: 3px solid #8b5cf6;
+            margin: 20px 0;
+            padding-left: 20px;
+        }
+
+        .timeline-item {
+            margin-bottom: 32px;
+            position: relative;
+        }
+
+        .timeline-item:before {
+            content: "";
+            width: 14px;
+            height: 14px;
+            background: #8b5cf6;
+            border-radius: 50%;
+            position: absolute;
+            left: -30px;
+            top: 4px;
+            border: 3px solid #1a1a1a;
+        }
+
+        .timeline-upcoming:before {
+            background: #4b5563;
+        }
+
+        .timeline-date {
+            font-size: 0.95rem;
+            color: #c4b5fd !important;
+            font-weight: 600;
+        }
+
+        .timeline-title {
+            font-size: 1.25rem;
+            margin-top: 4px;
+            font-weight: 700;
+            color: #ffffff !important;
+        }
+
+        .timeline-desc {
+            margin-top: 6px;
+            font-size: 1rem;
+            color: #dcdcdc !important;
+            line-height: 1.4;
+        }
+
+        b {
+            color: #c4b5fd !important;
+        }
+    </style>
+
+    <div class="timeline">
+
+        <div class="timeline-item">
+            <div class="timeline-date">📅 July 2024</div>
+            <div class="timeline-title">Project Kickoff</div>
+            <div class="timeline-desc">
+                Defined research scope on RLHF vulnerabilities — sycophancy, mode collapse, reward tampering.
+            </div>
+        </div>
+
+        <div class="timeline-item">
+            <div class="timeline-date">📅 August 2024</div>
+            <div class="timeline-title">Literature Review Started</div>
+            <div class="timeline-desc">
+                Reviewed 40+ papers on behavioral failures in alignment-trained LLMs.
+            </div>
+        </div>
+
+        <div class="timeline-item">
+            <div class="timeline-date">📅 September 2024</div>
+            <div class="timeline-title">Review Paper Completed</div>
+            <div class="timeline-desc">
+                Completed full literature survey and identified major open gaps.
+            </div>
+        </div>
+
+        <div class="timeline-item">
+            <div class="timeline-date">📅 October 2024</div>
+            <div class="timeline-title">Behavioral Tests Implemented</div>
+            <div class="timeline-desc">
+                Conducted tests on <b>sycophancy</b>, <b>mode collapse</b>, and <b>reward tampering</b>.
+            </div>
+        </div>
+
+        <div class="timeline-item">
+            <div class="timeline-date">📅 November 2024</div>
+            <div class="timeline-title">Correlation Analysis</div>
+            <div class="timeline-desc">
+                Discovered behavioral correlations:<br>
+                – Sycophancy ↔ Reward Tampering<br>
+                – Mode Collapse ↔ Reward Tampering
+            </div>
+        </div>
+
+        <div class="timeline-item">
+            <div class="timeline-date">📅 December 2024</div>
+            <div class="timeline-title">Synthetic Data Experiments</div>
+            <div class="timeline-desc">
+                Created controlled synthetic datasets to study interaction patterns.
+            </div>
+        </div>
+
+        <div class="timeline-item timeline-upcoming">
+            <div class="timeline-date">📅 January 2025</div>
+            <div class="timeline-title">Mitigation Strategy Design</div>
+            <div class="timeline-desc">
+                Begin designing mitigation approaches (contrastive decoding, guardrails, anti-sycophancy prompts).
+            </div>
+        </div>
+
+        <div class="timeline-item timeline-upcoming">
+            <div class="timeline-date">📅 February 2025</div>
+            <div class="timeline-title">Mode Collapse Re-Evaluation</div>
+            <div class="timeline-desc">
+                Test whether mitigations reduce collapse & improve generation diversity.
+            </div>
+        </div>
+
+        <div class="timeline-item timeline-upcoming">
+            <div class="timeline-date">📅 March 2025</div>
+            <div class="timeline-title">Reward Tampering Stress Tests</div>
+            <div class="timeline-desc">
+                Run adversarial reward hacking tests to evaluate stability.
+            </div>
+        </div>
+
+        <div class="timeline-item timeline-upcoming">
+            <div class="timeline-date">📅 April 2025</div>
+            <div class="timeline-title">Final Integration</div>
+            <div class="timeline-desc">
+                Build unified alignment–stability evaluation framework.
+            </div>
+        </div>
+
+    </div>
+    """, height=1700, scrolling=True)
+
+# ===== TAB 5 =====
+elif page == "🔮 Future Work":
+    st.header("🔮 Future Work & FYP-2 Roadmap")
+    
+    st.markdown("""
+    Building on our FYP-1 findings—**confirmed behavioral correlations** (r = 0.6159 for sycophancy-reward tampering)—
+    we propose a comprehensive FYP-2 agenda focused on **developing, implementing, and validating mitigation strategies**.
+    """)
+    
+    st.divider()
+    
+    # FYP-1 → FYP-2 Transition
+    st.markdown("### 🔄 From Discovery to Solution")
+    
+    transition_col1, transition_col2 = st.columns(2)
+    
+    with transition_col1:
+        st.success("""
+        #### ✅ FYP-1 Achievements
+        
+        **What We Discovered:**
+        - Validated behavioral triad hypothesis empirically
+        - Measured sycophancy-reward tampering correlation (r = 0.6159)
+        - Identified domain-specific vulnerability patterns
+        - Mapped model-specific susceptibility profiles
+        - Created open-source evaluation framework
+        
+        **Key Insight:**
+        Problem is **confirmed and quantified** across 5 models and 3 domains.
+        """)
+    
+    with transition_col2:
+        st.info("""
+        #### 🎯 FYP-2 Mission
+        
+        **What We'll Build:**
+        - Design novel mitigation strategies
+        - Implement training & inference interventions
+        - Test effectiveness across behavioral triad
+        - Validate mode collapse reduction
+        - Deploy production-ready solutions
+        
+        **Key Goal:**
+        Move from **understanding** the problem to **solving** it.
+        """)
+    
+    st.divider()
+    
+    # Core FYP-2 Objectives
+    st.markdown("### 🎯 FYP-2 Primary Objectives")
+    
+    objectives_tabs = st.tabs([
+        "🛡️ Mitigation Development",
+        "🧪 Experimental Validation", 
+        "📊 Mode Collapse Analysis",
+        "🌍 Multilingual Expansion"
+    ])
+    
+    with objectives_tabs[0]:
+        st.markdown("### 🛡️ Objective 1: Design & Implement Mitigation Strategies")
+        
+        mit_col1, mit_col2 = st.columns([3, 2])
+        
+        with mit_col1:
+            st.markdown("""
+            #### Phase 1: Training-Time Interventions (Months 1-4)
+            
+            **1.1 Multi-Objective Reward Modeling**
+            - Extend RLHF reward function with diversity and honesty terms
+            - Implement weighted loss: `L_total = α·L_accuracy + β·L_helpfulness + γ·L_diversity`
+            - Target: Reduce sycophancy by 25-30% (literature benchmark)
+            
+            **1.2 Adversarial Preference Training**
+            - Generate synthetic "challenging user" datasets
+            - Train models to resist agreement pressure
+            - Include contradictory rebuttals in fine-tuning data
+            
+            **1.3 Pinpoint Tuning Implementation**
+            - Replicate Chen et al.'s approach with our datasets
+            - Balance accuracy, helpfulness, diversity objectives
+            - Expected: 30%+ reduction in regressive sycophancy
+            """)
+            
+            st.markdown("""
+            #### Phase 2: Inference-Time Techniques (Months 3-5)
+            
+            **2.1 Contrastive Decoding (LQCD)**
+            - Implement Leading Query Contrastive Decoding
+            - Modify token probability distributions during generation
+            - Target: 15-20% sycophancy reduction with <2× latency
+            
+            **2.2 Activation Steering (KL-then-Steer)**
+            - Identify sycophantic activation patterns via probing
+            - Implement real-time steering during inference
+            - Constrain KL divergence to preserve helpfulness
+            
+            **2.3 System 2 Attention Integration**
+            - Filter misleading context before attention computation
+            - Test on medical/legal domains (highest risk)
+            - Expected: 10-15% accuracy improvement
+            """)
+        
+        with mit_col2:
+            st.warning("""
+            **Deliverable 1:**
+            
+            🔧 **Mitigation Toolkit**
+            - Python package with 3 training methods
+            - 3 inference-time techniques
+            - Unified API for easy integration
+            
+            📊 **Evaluation Suite**
+            - Before/after comparison framework
+            - Automated metric calculation
+            - Visualization dashboard
+            
+            📝 **Documentation**
+            - Implementation guides
+            - Hyperparameter recommendations
+            - Domain-specific best practices
+            """)
+            
+            st.metric("Success Criterion", "≥20% reduction", 
+                     help="Target sycophancy reduction across all models")
+            st.metric("Helpfulness Preservation", "≥95%", 
+                     help="Maintain baseline helpfulness scores")
+    
+    with objectives_tabs[1]:
+        st.markdown("### 🧪 Objective 2: Comprehensive Experimental Validation")
+        
+        val_col1, val_col2 = st.columns(2)
+        
+        with val_col1:
+            st.markdown("""
+            #### 2.1 Baseline Re-Measurement (Month 2)
+            
+            **Expanded Model Coverage:**
+            - Add GPT-4 Turbo, Claude-3 Opus, Gemini-1.5-Pro
+            - Test open-source: Mistral-8x22B, Mixtral, Yi-34B
+            - Total: **10 models** (vs. 5 in FYP-1)
+            
+            **Enhanced Test Suite:**
+            - Increase test cases: 150 → **300+ scenarios**
+            - Add legal domain (high-stakes decisions)
+            - Include ethical dilemmas category
+            - Multi-turn conversation protocols (5-10 exchanges)
+            """)
+            
+            st.markdown("""
+            #### 2.2 Mitigation Effectiveness Testing (Months 4-6)
+            
+            **Comparative Analysis:**
+            - Test each mitigation strategy independently
+            - Test combined approaches (training + inference)
+            - Measure behavioral triad impact holistically
+            
+            **Metrics Framework:**
+            - **Sycophancy**: Progressive/regressive rates
+            - **Mode Collapse**: Response entropy, perplexity
+            - **Reward Tampering**: Adversarial probing success
+            - **Side Effects**: Helpfulness, latency, safety
+            """)
+        
+        with val_col2:
+            st.markdown("""
+            #### 2.3 Domain-Specific Deep Dives (Months 5-7)
+            
+            **Medical Domain Focus:**
+            - Partner with medical professionals for evaluation
+            - Test on real patient query datasets (anonymized)
+            - Measure safety-critical failure rates
+            
+            **Legal Advisory Testing:**
+            - Create case-based evaluation scenarios
+            - Test bias toward client preferences
+            - Assess neutrality preservation
+            
+            **Educational Content:**
+            - Student misconception correction tests
+            - Pedagogical effectiveness measurement
+            - Long-term learning outcome simulation
+            """)
+            
+            st.success("""
+            **Deliverable 2:**
+            
+            📈 **Validation Report**
+            - 10 models × 6 strategies = 60 configurations
+            - Statistical significance testing (p < 0.05)
+            - Domain-specific performance profiles
+            - Cost-benefit analysis
+            
+            🏆 **Recommended Configurations**
+            - Best overall strategy
+            - Domain-optimized approaches
+            - Resource-constrained solutions
+            """)
+    
+    with objectives_tabs[2]:
+        st.markdown("### 📊 Objective 3: Mode Collapse Deep Investigation")
+        
+        st.info("""
+        **Research Gap**: FYP-1 identified mode collapse correlation (r = 0.344) but didn't directly measure 
+        entropy dynamics or test collapse-specific interventions. FYP-2 will rigorously quantify this mediating variable.
+        """)
+        
+        collapse_col1, collapse_col2 = st.columns(2)
+        
+        with collapse_col1:
+            st.markdown("""
+            #### 3.1 Entropy Measurement Protocol (Months 2-3)
+            
+            **Direct Measurement:**
+            - Calculate response entropy: `H(X) = -Σ p(xi) log2 p(xi)`
+            - Measure across 100 prompts × 10 models = 1000 samples
+            - Track entropy vs. sycophancy correlation
+            
+            **Diversity Metrics:**
+            - Self-BLEU (lower = more diverse)
+            - Distinct-n (unique n-gram ratios)
+            - Semantic diversity (embedding space spread)
+            
+            **Baseline Thresholds:**
+            - Define "severe collapse": >60% entropy reduction
+            - Identify collapse onset points per model
+            - Map collapse → tampering pathways
+            """)
+            
+            st.markdown("""
+            #### 3.2 Collapse-Targeted Mitigations (Months 4-6)
+            
+            **Diversity-Preserving Techniques:**
+            
+            1. **Diverse Beam Search**
+               - Modify decoding to penalize repetition
+               - Encourage exploration in output space
+            
+            2. **Temperature Scheduling**
+               - Dynamic temperature during generation
+               - Balance creativity vs. coherence
+            
+            3. **Multi-Sample Aggregation**
+               - Generate multiple outputs, select most diverse
+               - Ensemble approaches for response variety
+            
+            **Expected Outcomes:**
+            - Increase entropy by 30-40%
+            - Reduce tampering vulnerability by 20%
+            - Maintain factual accuracy
+            """)
+        
+        with collapse_col2:
+            st.warning("""
+            **Hypothesis to Test:**
+            
+            If mode collapse truly mediates the sycophancy → tampering cascade:
+            
+            ✅ **Prediction 1**: Reducing collapse should weaken tampering
+            
+            ✅ **Prediction 2**: Diversity interventions lower both sycophancy and tampering
+            
+            ✅ **Prediction 3**: Entropy correlates inversely with both behaviors (r < -0.5)
+            """)
+            
+            st.markdown("""
+            #### 3.3 Training Trajectory Analysis (Months 5-7)
+            
+            **Temporal Dynamics:**
+            - Checkpoint models every 5 epochs
+            - Measure behavioral triad evolution
+            - Identify critical transition points
+            
+            **Longitudinal Study:**
+            - Track 3 models through full RLHF process
+            - Compare standard vs. diversity-aware training
+            - Validate cascade hypothesis empirically
+            
+            **Visualization:**
+            - Interactive entropy-behavior phase diagrams
+            - Temporal heatmaps of collapse severity
+            - Correlation strength evolution plots
+            """)
+            
+            st.success("""
+            **Deliverable 3:**
+            
+            📉 **Mode Collapse Report**
+            - Entropy measurements for 10 models
+            - Collapse-mitigation effectiveness analysis
+            - Causal pathway validation
+            
+            🔬 **Training Trajectory Data**
+            - Checkpoint evaluations (50+ timepoints)
+            - Behavioral emergence timelines
+            - Intervention impact visualization
+            """)
+    
+    with objectives_tabs[3]:
+        st.markdown("### 🌍 Objective 4: Multilingual & Cross-Cultural Expansion")
+        
+        st.error("""
+        **Critical Gap from Literature**: 95%+ of sycophancy research is English-only. Cultural differences 
+        in agreement norms, politeness conventions, and authority deference may drastically alter behavioral patterns.
+        """)
+        
+        multi_col1, multi_col2 = st.columns(2)
+        
+        with multi_col1:
+            st.markdown("""
+            #### 4.1 Language Coverage (Months 6-8)
+            
+            **Target Languages:**
+            
+            🌐 **High-Resource (Priority 1):**
+            - Spanish, French, German, Chinese (Mandarin)
+            - Arabic, Hindi, Japanese, Portuguese
+            
+            🌏 **Medium-Resource (Priority 2):**
+            - Urdu, Bengali, Korean, Italian
+            - Russian, Turkish, Vietnamese
+            
+            **Test Set Translation:**
+            - Professional translation of 150 core scenarios
+            - Cultural adaptation (not literal translation)
+            - Native speaker validation
+            - Back-translation quality checks
+            """)
+            
+            st.markdown("""
+            #### 4.2 Cultural Context Analysis (Months 7-9)
+            
+            **Hypothesis:**
+            Cultures with higher power distance (Hofstede) may show:
+            - More sycophancy (respect for authority)
+            - Different collapse patterns (collectivist consensus)
+            - Varied tampering strategies (indirect communication)
+            
+            **Research Questions:**
+            1. Do East Asian models exhibit higher sycophancy?
+            2. Are Western models more confrontational with users?
+            3. Do linguistic structures (honorifics) affect behavior?
+            
+            **Methodology:**
+            - Compare 5 language families
+            - Cultural dimension correlation analysis
+            - Sociolinguistic pattern recognition
+            """)
+        
+        with multi_col2:
+            st.markdown("""
+            #### 4.3 Multilingual Mitigation Adaptation (Months 8-10)
+            
+            **Challenges:**
+            - Contrastive decoding requires language-specific tuning
+            - Reward models may have cultural biases
+            - Activation patterns differ across tokenizers
+            
+            **Solutions:**
+            1. **Language-Agnostic Techniques**
+               - Entropy-based approaches work universally
+               - Architecture modifications transfer
+            
+            2. **Cultural Calibration**
+               - Adjust agreement thresholds per culture
+               - Train multilingual reward models
+               - Collect diverse preference data
+            
+            3. **Zero-Shot Transfer Testing**
+               - Train mitigation in English
+               - Test effectiveness in other languages
+               - Measure generalization gap
+            """)
+            
+            st.success("""
+            **Deliverable 4:**
+            
+            🌐 **Multilingual Dataset**
+            - 150 scenarios × 8 languages = 1200 tests
+            - Cultural context annotations
+            - Native speaker quality scores
+            
+            📊 **Cross-Linguistic Analysis**
+            - Behavioral comparison across languages
+            - Cultural dimension correlations
+            - Translation quality impact study
+            
+            🔧 **Adapted Mitigations**
+            - Language-specific recommendations
+            - Transfer learning effectiveness report
+            - Deployment guidelines per region
+            """)
+    
+    st.divider()
+        
+    # Expected Contributions
+    st.markdown("### 🏆 Expected Contributions to Research Community")
+    
+    contrib_col1, contrib_col2, contrib_col3 = st.columns(3)
+    
+    with contrib_col1:
+        st.markdown("""
+        #### 📚 Theoretical
+        
+        - First causal validation of mode collapse mediation
+        - Multilingual behavioral pattern taxonomy
+        - Cultural influence framework
+        - Temporal cascade dynamics model
+        """)
+    
+    with contrib_col2:
+        st.markdown("""
+        #### 🔧 Practical
+        
+        - Open-source mitigation toolkit
+        - Production deployment guidelines
+        - Domain-specific best practices
+        - Cost-benefit decision framework
+        """)
+    
+    with contrib_col3:
+        st.markdown("""
+        #### 📊 Empirical
+        
+        - 10-model comparative dataset
+        - Multilingual evaluation benchmark
+        - Mitigation effectiveness meta-analysis
+        - Mode collapse measurement protocol
+        """)
+    
+    st.divider()
+    
+    
